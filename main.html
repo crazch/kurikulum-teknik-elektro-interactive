@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurikulum Teknik Elektro S1</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --card: #161a22;
+    --border: #1e2530;
+    --accent: #f5a623;
+    --accent2: #4facfe;
+    --accent3: #00f2a3;
+    --accent4: #ff6b6b;
+    --accent5: #c471ed;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --bright: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,172,254,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,172,254,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 60px 0 40px;
+    text-align: center;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--accent2), transparent);
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--bright) 0%, var(--accent2) 60%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 48px 0 32px;
+  }
+
+  .stat-box {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 16px;
+    text-align: center;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent-color, var(--accent));
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--bright);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* Filter tabs */
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .filter-btn {
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: var(--bg);
+  }
+
+  /* Semester blocks */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-bottom: 80px;
+  }
+
+  .semester-block {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .semester-block:hover {
+    border-color: rgba(79,172,254,0.3);
+  }
+
+  .sem-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+  }
+
+  .sem-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: var(--badge-bg, rgba(79,172,254,0.1));
+    color: var(--badge-color, var(--accent2));
+    border: 1px solid var(--badge-border, rgba(79,172,254,0.2));
+    white-space: nowrap;
+  }
+
+  .sem-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--bright);
+    flex: 1;
+  }
+
+  .sem-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .sem-toggle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--muted);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .semester-block.open .sem-toggle {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: var(--bg);
+    transform: rotate(180deg);
+  }
+
+  /* Subjects grid */
+  .subjects-grid {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    padding: 20px 24px;
+  }
+
+  .semester-block.open .subjects-grid {
+    display: grid;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .subject-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .subject-card:hover {
+    border-color: rgba(79,172,254,0.3);
+    background: rgba(79,172,254,0.03);
+  }
+
+  .subject-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--cat-color, var(--accent2));
+    border-radius: 4px 0 0 4px;
+  }
+
+  .subject-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bright);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .subject-topics {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 6px;
+  }
+
+  .subject-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .tag-core { background: rgba(245,166,35,0.1); color: var(--accent); border: 1px solid rgba(245,166,35,0.2); }
+  .tag-lab { background: rgba(0,242,163,0.1); color: var(--accent3); border: 1px solid rgba(0,242,163,0.2); }
+  .tag-math { background: rgba(196,113,237,0.1); color: var(--accent5); border: 1px solid rgba(196,113,237,0.2); }
+  .tag-elec { background: rgba(79,172,254,0.1); color: var(--accent2); border: 1px solid rgba(79,172,254,0.2); }
+  .tag-soft { background: rgba(255,107,107,0.1); color: var(--accent4); border: 1px solid rgba(255,107,107,0.2); }
+
+  .credits {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    letter-spacing: 1px;
+  }
+
+  /* Year separator */
+  .year-sep {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 8px 0 16px;
+  }
+
+  .year-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--muted);
+    white-space: nowrap;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  .year-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Color coding per year */
+  .year-1 .sem-badge { --badge-bg: rgba(0,242,163,0.1); --badge-color: var(--accent3); --badge-border: rgba(0,242,163,0.2); }
+  .year-2 .sem-badge { --badge-bg: rgba(79,172,254,0.1); --badge-color: var(--accent2); --badge-border: rgba(79,172,254,0.2); }
+  .year-3 .sem-badge { --badge-bg: rgba(245,166,35,0.1); --badge-color: var(--accent); --badge-border: rgba(245,166,35,0.2); }
+  .year-4 .sem-badge { --badge-bg: rgba(196,113,237,0.1); --badge-color: var(--accent5); --badge-border: rgba(196,113,237,0.2); }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .subjects-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <span class="header-tag">⚡ Panduan Lengkap</span>
+    <h1>Kurikulum Teknik Elektro S1</h1>
+    <p class="subtitle">8 Semester · ~144 SKS · Universitas Teknik Indonesia</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat-box" style="--accent-color: var(--accent3)">
+      <span class="stat-num">8</span>
+      <span class="stat-label">Semester</span>
+    </div>
+    <div class="stat-box" style="--accent-color: var(--accent2)">
+      <span class="stat-num">~144</span>
+      <span class="stat-label">Total SKS</span>
+    </div>
+    <div class="stat-box" style="--accent-color: var(--accent)">
+      <span class="stat-num">~50+</span>
+      <span class="stat-label">Mata Kuliah</span>
+    </div>
+    <div class="stat-box" style="--accent-color: var(--accent5)">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Tahun Studi</span>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Wajib/Core</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div>Praktikum</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent5)"></div>Matematika</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div>Elektronika/Listrik</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent4)"></div>Soft Skills/Umum</div>
+  </div>
+
+  <div class="timeline" id="timeline">
+
+    <!-- YEAR 1 -->
+    <div class="year-sep"><div class="year-line"></div><span class="year-label">TAHUN PERTAMA</span><div class="year-line"></div></div>
+
+    <!-- Semester 1 -->
+    <div class="semester-block year-1 open" data-sem="1">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 01</span>
+        <span class="sem-title">Fondasi Sains & Matematika</span>
+        <span class="sem-meta">~20 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Kalkulus 1</div>
+          <div class="subject-topics">Limit, turunan, integral tak tentu, fungsi transenden, teknik integrasi dasar</div>
+          <div class="subject-tags"><span class="tag tag-math">Matematika</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Aljabar Linear & Matriks</div>
+          <div class="subject-topics">Vektor, matriks, determinan, transformasi linear, eigenvalue & eigenvector</div>
+          <div class="subject-tags"><span class="tag tag-math">Matematika</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Fisika Dasar 1</div>
+          <div class="subject-topics">Mekanika, kinematika, dinamika, usaha & energi, momentum, rotasi</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Fisika Dasar 1</div>
+          <div class="subject-topics">Pengukuran, gerak, gaya, momen inersia, osilasi mekanik</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Pengantar Teknik Elektro</div>
+          <div class="subject-topics">Sejarah dan ruang lingkup, bidang kelistrikan, elektronika, telekomunikasi, kendali, energi; profesi insinyur</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">Bahasa Indonesia Teknis</div>
+          <div class="subject-topics">Penulisan ilmiah, laporan teknis, presentasi, EYD, tata bahasa baku</div>
+          <div class="subject-tags"><span class="tag tag-soft">Umum</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">Agama & Etika</div>
+          <div class="subject-topics">Nilai keagamaan, etika profesi, integritas, tanggung jawab insinyur</div>
+          <div class="subject-tags"><span class="tag tag-soft">Umum</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">Kewarganegaraan & Pancasila</div>
+          <div class="subject-topics">Ideologi negara, wawasan kebangsaan, konstitusi, bela negara</div>
+          <div class="subject-tags"><span class="tag tag-soft">Umum</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Semester 2 -->
+    <div class="semester-block year-1" data-sem="2">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 02</span>
+        <span class="sem-title">Sains Lanjut & Pemrograman</span>
+        <span class="sem-meta">~20 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Kalkulus 2</div>
+          <div class="subject-topics">Integral tentu, aplikasi integral, deret tak terhingga, fungsi multivariabel, turunan parsial</div>
+          <div class="subject-tags"><span class="tag tag-math">Matematika</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Fisika Dasar 2</div>
+          <div class="subject-topics">Listrik, magnet, optik, gelombang, termodinamika dasar, fisika modern</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Fisika Dasar 2</div>
+          <div class="subject-topics">Kelistrikan dasar, magnet, optik, gelombang bunyi</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Pemrograman Komputer</div>
+          <div class="subject-topics">Algoritma, flowchart, C/Python, percabangan, perulangan, fungsi, array, pointer, file I/O</div>
+          <div class="subject-tags"><span class="tag tag-elec">Coding</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Pemrograman</div>
+          <div class="subject-topics">Implementasi algoritma, debugging, problem-solving dengan kode</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Kimia Dasar</div>
+          <div class="subject-topics">Ikatan kimia, termodinamika kimia, elektrokimia, material semikonduktor, korosi</div>
+          <div class="subject-tags"><span class="tag tag-math">Sains</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">Bahasa Inggris Teknik</div>
+          <div class="subject-topics">Technical reading, writing, presentation, scientific vocabulary, report writing</div>
+          <div class="subject-tags"><span class="tag tag-soft">Umum</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- YEAR 2 -->
+    <div class="year-sep"><div class="year-line"></div><span class="year-label">TAHUN KEDUA</span><div class="year-line"></div></div>
+
+    <!-- Semester 3 -->
+    <div class="semester-block year-2" data-sem="3">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 03</span>
+        <span class="sem-title">Inti Elektro & Matematika Teknik</span>
+        <span class="sem-meta">~20 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Matematika Teknik 1</div>
+          <div class="subject-topics">Persamaan diferensial biasa, solusi analitik, persamaan Bernoulli, sistem persamaan diferensial</div>
+          <div class="subject-tags"><span class="tag tag-math">Matematika</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Rangkaian Listrik 1</div>
+          <div class="subject-topics">Hukum Ohm, Kirchhoff (KVL/KCL), analisis node, mesh, superposisi, Thevenin, Norton, rangkaian DC</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Rangkaian Listrik</div>
+          <div class="subject-topics">Pengukuran multimeter, osiloskop, verifikasi teorema rangkaian</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Elektronika 1 (Analog)</div>
+          <div class="subject-topics">Dioda, BJT, MOSFET, karakteristik, bias, titik kerja, penguat sinyal kecil</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Elektromagnetika 1</div>
+          <div class="subject-topics">Analisis vektor, hukum Coulomb, Gauss, Biot-Savart, Ampere, fluks, potensial listrik</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Sistem Digital & Logika</div>
+          <div class="subject-topics">Bilangan biner, hex, gerbang logika, aljabar Boolean, Karnaugh map, flip-flop, counter, register</div>
+          <div class="subject-tags"><span class="tag tag-elec">Digital</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Elektronika 1</div>
+          <div class="subject-topics">Karakteristik dioda, kurva transistor, bias BJT, simulasi SPICE/LTspice</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Semester 4 -->
+    <div class="semester-block year-2" data-sem="4">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 04</span>
+        <span class="sem-title">Sinyal, Sistem & Mesin Listrik</span>
+        <span class="sem-meta">~20 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Matematika Teknik 2</div>
+          <div class="subject-topics">Transformasi Laplace, transformasi Fourier, fungsi kompleks, variabel kompleks, aplikasi teknik</div>
+          <div class="subject-tags"><span class="tag tag-math">Matematika</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Rangkaian Listrik 2</div>
+          <div class="subject-topics">Rangkaian AC, fasor, impedansi, resonansi, daya AC, respon frekuensi, filter pasif</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Sinyal & Sistem</div>
+          <div class="subject-topics">Sinyal waktu kontinyu/diskrit, konvolusi, sistem LTI, Fourier series, FFT, Z-transform</div>
+          <div class="subject-tags"><span class="tag tag-elec">Sinyal</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Elektronika 2 (Lanjut)</div>
+          <div class="subject-topics">Op-Amp, feedback, osilator, filter aktif, penguat daya, CMOS, IC analog</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Mesin Listrik</div>
+          <div class="subject-topics">Transformator, motor DC, motor AC (induksi, sinkron), generator, prinsip konversi energi</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Elektronika 2</div>
+          <div class="subject-topics">Op-Amp aplikasi, filter aktif, osilator, penguat daya</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Probabilitas & Statistika Teknik</div>
+          <div class="subject-topics">Teori peluang, distribusi, estimasi, uji hipotesis, regresi, analisis data eksperimen</div>
+          <div class="subject-tags"><span class="tag tag-math">Matematika</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- YEAR 3 -->
+    <div class="year-sep"><div class="year-line"></div><span class="year-label">TAHUN KETIGA</span><div class="year-line"></div></div>
+
+    <!-- Semester 5 -->
+    <div class="semester-block year-3" data-sem="5">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 05</span>
+        <span class="sem-title">Sistem Kendali, Embedded & Telekomunikasi</span>
+        <span class="sem-meta">~20 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Sistem Kendali</div>
+          <div class="subject-topics">Fungsi alih, diagram blok, root locus, kriteria stabilitas Routh, respon transien, kontroler PID</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span><span class="tag tag-elec">Kendali</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Elektronika Digital & Mikroprosesor</div>
+          <div class="subject-topics">Arsitektur CPU, set instruksi, memori, I/O, assembly, mikrokontroler (Arduino/STM32)</div>
+          <div class="subject-tags"><span class="tag tag-elec">Digital</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Mikrokontroler</div>
+          <div class="subject-topics">GPIO, timer, interrupt, ADC, UART, SPI, I2C, aplikasi embedded</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Dasar Telekomunikasi</div>
+          <div class="subject-topics">Modulasi AM/FM/PM, bandwidth, noise, SNR, saluran komunikasi, demodulasi</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span><span class="tag tag-elec">Telkom</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Sistem Tenaga Listrik</div>
+          <div class="subject-topics">Sistem 3-fasa, analisis saluran transmisi, pembangkit, distribusi, beban, diagram satu garis</div>
+          <div class="subject-tags"><span class="tag tag-elec">Tenaga</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent2)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Elektromagnetika 2</div>
+          <div class="subject-topics">Persamaan Maxwell, gelombang EM, polarisasi, propagasi, antena dasar, waveguide</div>
+          <div class="subject-tags"><span class="tag tag-elec">Elektro</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">Kewirausahaan Teknik</div>
+          <div class="subject-topics">Business model canvas, lean startup, manajemen proyek, technopreneur, pitching</div>
+          <div class="subject-tags"><span class="tag tag-soft">Soft Skill</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Semester 6 -->
+    <div class="semester-block year-3" data-sem="6">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 06</span>
+        <span class="sem-title">Spesialisasi & Aplikasi Lanjut</span>
+        <span class="sem-meta">~20 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Elektronika Daya</div>
+          <div class="subject-topics">Dioda, thyristor, IGBT, rectifier, inverter, DC-DC converter (buck/boost), PWM, UPS, VFD</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span><span class="tag tag-elec">Tenaga</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Pengolahan Sinyal Digital (DSP)</div>
+          <div class="subject-topics">Z-transform, DTFT, DFT/FFT, filter FIR/IIR, desain filter digital, aplikasi audio/citra</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span><span class="tag tag-elec">Sinyal</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Komunikasi Digital</div>
+          <div class="subject-topics">PCM, ASK/FSK/PSK/QAM, deteksi sinyal, BER, OFDM, spread spectrum, kapasitas Shannon</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span><span class="tag tag-elec">Telkom</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Sistem Kendali Lanjut</div>
+          <div class="subject-topics">Kendali state space, observer, kontrol optimal, respon frekuensi (Bode, Nyquist), kendali digital</div>
+          <div class="subject-tags"><span class="tag tag-elec">Kendali</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent3)">
+          <span class="credits">1 SKS</span>
+          <div class="subject-name">Praktikum Sistem Kendali</div>
+          <div class="subject-topics">MATLAB/Simulink, desain PID, simulasi loop tertutup, hardware-in-the-loop</div>
+          <div class="subject-tags"><span class="tag tag-lab">Lab</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Proteksi & Keandalan Sistem Tenaga</div>
+          <div class="subject-topics">Analisis hubung singkat, relay proteksi, pemutus sirkuit, grounding, koordinasi proteksi</div>
+          <div class="subject-tags"><span class="tag tag-elec">Tenaga</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">Etika Profesi & Hukum Ketenagalistrikan</div>
+          <div class="subject-topics">Kode etik IEEE, regulasi PUIL, standar keselamatan, lisensi ketenagalistrikan, K3</div>
+          <div class="subject-tags"><span class="tag tag-soft">Profesional</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- YEAR 4 -->
+    <div class="year-sep"><div class="year-line"></div><span class="year-label">TAHUN KEEMPAT</span><div class="year-line"></div></div>
+
+    <!-- Semester 7 -->
+    <div class="semester-block year-4" data-sem="7">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 07</span>
+        <span class="sem-title">Mata Kuliah Pilihan & KKN/Magang</span>
+        <span class="sem-meta">~18 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Machine Learning untuk Teknik Elektro</div>
+          <div class="subject-topics">Regresi, klasifikasi, neural network, CNN, aplikasi pada citra & sinyal, TensorFlow/PyTorch</div>
+          <div class="subject-tags"><span class="tag tag-elec">Pilihan</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Internet of Things (IoT)</div>
+          <div class="subject-topics">Protokol MQTT/HTTP, sensor/aktuator, cloud platform, edge computing, keamanan IoT</div>
+          <div class="subject-tags"><span class="tag tag-elec">Pilihan</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Energi Terbarukan</div>
+          <div class="subject-topics">Panel surya, PLTS, turbin angin, sel bahan bakar, penyimpanan energi, grid integration</div>
+          <div class="subject-tags"><span class="tag tag-elec">Pilihan</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Robotika & Otomasi Industri</div>
+          <div class="subject-topics">Kinematika robot, PLC, SCADA, sensor industrial, aktuator, lini produksi otomatis, ROS</div>
+          <div class="subject-tags"><span class="tag tag-elec">Pilihan</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">VLSI & Desain Chip</div>
+          <div class="subject-topics">CMOS logic, layout IC, Cadence/Synopsys tools, timing, power analysis, tapeout flow</div>
+          <div class="subject-tags"><span class="tag tag-elec">Pilihan</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Kerja Praktik / Magang Industri</div>
+          <div class="subject-topics">Implementasi di perusahaan / industri, laporan teknis, presentasi hasil magang</div>
+          <div class="subject-tags"><span class="tag tag-soft">Praktik</span><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Semester 8 -->
+    <div class="semester-block year-4" data-sem="8">
+      <div class="sem-header" onclick="toggleSem(this)">
+        <span class="sem-badge">SMT 08</span>
+        <span class="sem-title">Tugas Akhir & Seminar</span>
+        <span class="sem-meta">~14–18 SKS</span>
+        <div class="sem-toggle">▼</div>
+      </div>
+      <div class="subjects-grid">
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">Seminar Proposal / Metodologi Penelitian</div>
+          <div class="subject-topics">Merumuskan masalah, studi literatur, metodologi, proposal TA, presentasi seminar</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">6 SKS</span>
+          <div class="subject-name">Tugas Akhir (Skripsi)</div>
+          <div class="subject-topics">Penelitian mandiri dengan dosen pembimbing: perancangan, implementasi, pengujian, penulisan, sidang</div>
+          <div class="subject-tags"><span class="tag tag-core">Wajib</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent5)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Mata Kuliah Pilihan Lanjut</div>
+          <div class="subject-topics">Smart Grid, 5G/RF, Computer Vision, Biomedical Engineering, Autonomous Vehicle, dsb</div>
+          <div class="subject-tags"><span class="tag tag-elec">Pilihan</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">3 SKS</span>
+          <div class="subject-name">Manajemen & Ekonomi Teknik</div>
+          <div class="subject-topics">Analisis biaya-manfaat, NPV, IRR, project management, estimasi biaya proyek, ROI</div>
+          <div class="subject-tags"><span class="tag tag-soft">Profesional</span></div>
+        </div>
+
+        <div class="subject-card" style="--cat-color: var(--accent4)">
+          <span class="credits">2 SKS</span>
+          <div class="subject-name">KKN / Community Engagement</div>
+          <div class="subject-topics">Pengabdian masyarakat berbasis teknologi, instalasi listrik pedesaan, penyuluhan teknik</div>
+          <div class="subject-tags"><span class="tag tag-soft">Wajib</span></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end timeline -->
+
+  <div style="text-align:center; padding: 20px 0 60px; font-family:'IBM Plex Mono',monospace; font-size:11px; color: var(--muted); letter-spacing:1px;">
+    ⚡ Kurikulum bersifat umum · Detail tiap universitas berbeda · Referensi: ITS, UI, ITB, UGM, UNDIP
+  </div>
+
+</div>
+
+<script>
+  function toggleSem(header) {
+    const block = header.closest('.semester-block');
+    block.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
